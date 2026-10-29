@@ -1,15 +1,17 @@
-# Step 1: make sure the system can un PixelHat, before changing anything.
+# Step 1: make sure the system can run PixelHat, before changing anything.
 
 echo ":: Checking the system..."
 
 # Configs go to the user's home folder, so a normal user must run this.
-HOME_DIR="$(ls /home)"
 if [[ $EUID -eq 0 ]]; then
     echo "!! Run this as your normal user, not as root (sudo is asked when needed)." >&2
-    if [[ -z "$HOME_DIR" ]]; then
+    USERS="$(getent passwd | awk -F: '$3 >= 1000 && $3 < 65000 { print $1 }')"
+    if [[ -z "$USERS" ]]; then
         echo "      No user yet? Create one as root, then log in as it:" >&2
         echo -e "\n          useradd -m -G wheel username" >&2
         echo -e "          passwd username\n" >&2
+    else
+        echo "      Log in as one of these users: $USERS" >&2
     fi
     exit 1
 fi
@@ -17,7 +19,7 @@ fi
 # Fedora only.
 source /etc/os-release
 if [[ "${ID:-}" != "fedora" ]]; then
-    echo "!! PixelHat needs Fedora 43 or newer (found: ${ID:-unknown})." >&2
+    echo "!! PixelHat needs Fedora (found: ${ID:-unknown})." >&2
     exit 1
 fi
 
@@ -37,12 +39,12 @@ fi
 # Packages need a few GB of free space on the system disk.
 FREE_GB=$(( $(df --output=avail -k / | tail -n 1) / 1024 / 1024))
 if (( FREE_GB < 10)); then
-    echo "!! Not enough free disk space: ${FREE_GB} GB (need at least 10 GB)". >&2
+    echo "!! Not enough free disk space: ${FREE_GB} GB (need at least 10 GB)." >&2
     exit 1
 fi
 
 # dnf and git need the internet.
-if ! curl -fsS --max-time 10 -o /dev/null https://www.google.com; then
+if ! curl -fsS --max-time 10 -o /dev/null https://fedoraproject.org; then
     echo "!! No internet connection."
     exit 1
 fi
