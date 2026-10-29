@@ -35,7 +35,7 @@ if [[ "$ARCH" != "x86_64" && "$ARCH" != "aarch64" ]]; then
     echo "!! Unsupported CPU architecture: $ARCH." >&2
     exit 1
 fi
-a
+
 # Packages need a few GB of free space on the system disk.
 FREE_GB=$(( $(df --output=avail -k / | tail -n 1) / 1024 / 1024))
 if (( FREE_GB < 10)); then
