@@ -45,14 +45,14 @@ fi
 
 # dnf and git need the internet.
 if ! curl -fsS --max-time 10 -o /dev/null https://fedoraproject.org; then
-    echo "!! No internet connection."
+    echo "!! No internet connection." >&2
     exit 1
 fi
 
 # Ask for the password once now, so it does not interrupt the installation later.
 if ! sudo -v; then
     echo "!! Sudo is needed to install packages." >&2
-    echo "   If $USER can't use sudo, run:" >&2
+    echo "   If $USER can't use sudo, as root run:" >&2
     echo -e "\n     usermod -aG wheel $USER\n" >&2
     exit 1
 fi
