@@ -3,8 +3,13 @@
 echo ":: Checking the system..."
 
 # Configs go to the user's home folder, so a normal user must run this.
+HOME_DIR="$(ls /home)"
 if [[ $EUID -eq 0 ]]; then
     echo "!! Run this as your normal user, not as root (sudo is asked when needed)." >&2
+    if [[ -z "$HOME_DIR" ]]; then
+        echo "      No user yet? Create one as root, then log in as it:" >&2
+        echo -e "\n          useradd -m -G wheel username" >&2
+        echo -e "          passwd username\n" >&2
     exit 1
 fi
 
@@ -42,6 +47,11 @@ if ! curl -fsS --max-time 10 -o /dev/null https://www.google.com; then
 fi
 
 # Ask for the password once now, so it does not interrupt the installation later.
-sudo -v || echo "!! Sudo is needed to install packages." && exit 1
+if ! sudo -v; then
+    echo "!! Sudo is needed to install packages." >&2
+    echo "   If $USER can't use sudo, run:" >&2
+    echo -e "\n     usermod -aG wheel $USER\n" >&2
+    exit 1
+fi
 
 echo ":: Fedora $VERSION_ID, $ARCH, ${FREE_GB} GB free: OK"
