@@ -10,6 +10,7 @@ if [[ $EUID -eq 0 ]]; then
         echo "      No user yet? Create one as root, then log in as it:" >&2
         echo -e "\n          useradd -m -G wheel username" >&2
         echo -e "          passwd username\n" >&2
+    fi
     exit 1
 fi
 
