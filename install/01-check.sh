@@ -57,4 +57,4 @@ if ! sudo -v; then
     exit 1
 fi
 
-echo ":: Fedora $VERSION_ID, $ARCH, ${FREE_GB} GB free: OK"
+echo -e ":: Fedora $VERSION_ID, $ARCH, ${FREE_GB} GB free: OK\n"
